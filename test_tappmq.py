@@ -1,19 +1,21 @@
 import unittest
-import json
 import redis
 import time
 
-from tappmq import subscription_handler, publish
+from tappmq.tappmq import MQHandlerBase, subscription_handler, publish
 
 red = redis.StrictRedis()
 
 
-def command_saver(channel, message):
-    red.lpush('%s_saver' % channel, message)
-
-
 def saver_retrieve(channel):
     return red.rpop('%s_saver' % channel)
+
+
+class Helper(MQHandlerBase):
+    NAME = 'Helper'
+
+    def saver(self, message):
+        red.lpush('%s_saver' % self.NAME.lower(), message)
 
 
 class SingleTestCase(unittest.TestCase):
@@ -24,12 +26,13 @@ class SingleTestCase(unittest.TestCase):
         red.flushall()
 
     def test_pubsub_single_channel(self):
-        cmdmap = {'saver': command_saver}
-        now = str(time.time())
-        publish('test', 'saver', now)
-        subscription_handler('test', cmdmap, multi=False)
-        message = saver_retrieve('test')
-        assert json.loads(message)['data'] == now
+        helper = Helper()
+        helper.setup_connections()
+        now = {'message': str(time.time())}
+        publish('helper', 'saver', now)
+        subscription_handler('helper', helper, multi=False)
+        message = saver_retrieve('helper')
+        assert message == now['message']
 
 
 def suite():
