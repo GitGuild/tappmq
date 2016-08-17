@@ -8,19 +8,27 @@ classifiers = [
 
 setup(
     name='tappmq',
-    version='0.0.1',
-    py_modules=['tappmq'],
+    version='0.0.2',
+    packages=['tappmq'],
     url='https://github.com/gitguild/tappmq',
     license='MIT',
     classifiers=classifiers,
     author='Ira Miller',
     author_email='ira@gitguild.com',
-    description='A message queue for the TAPP framework, using Redis and ' +\
+    description='A message queue for the TAPP framework, using Redis and ' +
                 'sqlalchemy. ',
     setup_requires=['pytest-runner'],
     install_requires=[
         'redis',
-        'bitjws'
+        'sqlalchemy',
+        'sqlalchemy_models',
+        'tapp-config',
+        'bitjws',
+        'supervisor'
     ],
-    tests_require=['pytest', 'pytest-cov']
+    tests_require=['pytest', 'pytest-cov'],
+    entry_points="""
+[console_scripts]
+tapplistener = tappmq.eventlistener:main
+"""
 )
