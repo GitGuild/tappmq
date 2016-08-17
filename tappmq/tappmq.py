@@ -3,9 +3,8 @@ A simple message queue for TAPPs using Redis.
 """
 import json
 import time
-from sqlalchemy_models import create_session_engine, setup_database, util
+from sqlalchemy_models import create_session_engine, setup_database, util, exchange as em, user as um, wallet as wm
 from tapp_config import setup_redis, get_config, setup_logging
-from trade_manager import em, um, wm
 
 
 def subscription_handler(channel, client, mykey=None, auth=False, multi=True):

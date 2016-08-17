@@ -28,6 +28,7 @@ class SingleTestCase(unittest.TestCase):
     def test_pubsub_single_channel(self):
         helper = Helper()
         helper.setup_connections()
+        helper.setup_logger()
         now = {'message': str(time.time())}
         publish('helper', 'saver', now)
         subscription_handler('helper', helper, multi=False)
